@@ -1,0 +1,128 @@
+#name hibye
+%contains greetings and farewells
+
+	#class start greeting
+		#class start normal
+			>hi
+		#class end normal
+		
+		#class start vernacular
+			>hey
+			%might need to define some spectrum of how friendly they are, then this can go into the friendly sections
+		#class end vernacular
+	
+		#class start formal
+			>hello
+			>good day |S=0.2
+		#class end formal
+	
+		#class start unfriendly |S=0.0
+			>hmmph
+			>what do you want?
+		#class end unfriendly
+	
+		#class start friendly |S=0.5
+			>heyy
+			>yo	|S=0.1
+			>hey there |S=0.3
+			>hello
+			>long time no see |S=0.0
+			>s'up |S=0.1
+		#class end friendly
+	#class end greeting
+	
+	#class start greetingQuestion
+		#class start friendly
+			>how's it going
+			>how are you
+			>how are you doing
+			>how is everything going
+		#class end friendly
+		
+		#class start formal
+			>how are you
+		#class end formal
+	#class end greetingQuestion
+	
+	#class start greetingQuestionReciprocating
+		#class start friendly
+			>what about you
+			>how about you
+			>and how are you
+			>and how are you doing
+			>and you
+			>you
+		#class end friendly
+		
+		#class start formal
+			>and how are you
+			>how are you
+		#class end formal
+	#class end greetingQuestionReciprocating
+	
+	#class start greetingAnswer
+		#class start friendly
+		>not bad
+		>not too bad
+		>pretty good
+		#class end friendly
+		
+		#class start formal
+		>very well
+		>very good
+		#class end formal
+	#class end greetingAnswer
+	
+	#class start farewell
+		#class start normal
+			>bye
+		#class end normal
+		
+		#class start polite
+			>have a nice day
+			>goodbye
+		#class end polite
+		
+		#class start unfriendly |S=0.0
+			>hmph
+			>bah
+		#class end unfriendly
+		
+		#class start friendly							
+			>byyee
+			>see you later
+			>take care
+			>have a good one
+		#class end friendly
+	#class end farewell
+	
+	#class start nicetomeetyou
+		
+		#class start friendly
+			>it's nice to meet you
+			>nice to meet you
+			>glad to meet you
+			
+			#class start pasttense |S=0.0
+				>it was nice to meet you
+				%>it was lovely meeting you
+				>it was great to meet you
+				>was great to meet you
+				%>it's been a pleasure meeting you
+			#class end pasttense
+			
+		#class end friendly
+		
+		#class start formal
+			>i'm pleased to meet you
+			>pleased to meet you
+			>it's a pleasure to meet you
+			>lovely to meet you
+			#class start pasttense |S=0.0
+				>it's been a pleasure meeting you
+				>it was lovely to meet you
+			#class end pasttense
+			
+		#class end formal
+		
+	#class end nicetomeetyou

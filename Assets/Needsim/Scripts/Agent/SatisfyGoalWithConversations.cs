@@ -14,11 +14,11 @@ using System.Collections.Generic;
 namespace NEEDSIM
 {
     /// <summary>
-    /// Participating a slot. The respective behavior for value/urgency oriented behaviors.
+    /// Participate in a slot to satisfy a goal.
     /// </summary>
-    public class SatisfyUrgentNeed : Action
+    public class SatisfyGoalWithConversations : Action
     {
-        public SatisfyUrgentNeed(NEEDSIMNode agent)
+		public SatisfyGoalWithConversations(NEEDSIMNode agent)
             : base(agent)
         { }
 
@@ -26,26 +26,24 @@ namespace NEEDSIM
         {
             get
             {
-                return "SatisfyUrgentNeed";
+                return "SatisfyGoal";
             }
         }
 
         /// <summary>
-        /// Participating a slot. The respective behavior for value/urgency oriented behaviors.
+        /// Satisfying a goal at an AffordanceTree node.
         /// </summary>
-        /// <returns>TODO</returns>
+        /// <returns>Success if need satsifaction goal was achieved, running whilst it is being satisfied. </returns>
         public override Action.Result Run()
         {
             if (agent.Blackboard.currentState == Blackboard.AgentState.ExitNEEDSIMBehaviors)
             {
                 //Actions should be interrupted until the agent state is dealt with.
-                agent.Blackboard.activeSlot.AgentDeparture();
                 return Result.Failure;
             }
 
             if (agent.Blackboard.activeSlot.SlotState == Simulation.Slot.SlotStates.Blocked)
             {
-                agent.Blackboard.activeSlot.AgentDeparture();
                 return Result.Failure;
             }
 
@@ -56,28 +54,27 @@ namespace NEEDSIM
                 && agent.AffordanceTreeNode.Parent.Affordance.CurrentInteraction != null)
             {
                 interactionStillRunning = true;
-                agent.Blackboard.LastInteractionSatiesfiedUrgentNeed = agent.AffordanceTreeNode.CurrentInteractionSatisfiesMostUrgentNeed;
             }
 
-            if (!interactionStillRunning)
-            {              
-                //If the agent has a new most urgent need it is time to go satisfy it
-                if (!agent.Blackboard.LastInteractionSatiesfiedUrgentNeed)
+            //If goal is achieved get ready for next action
+            if (!interactionStillRunning
+                && agent.AffordanceTreeNode.Goal.HasBeenAchieved)
+            {
+				// Check here for conversations:
+				//return Result.Running;
+
+
+                //If you do not want agents to stay at the same slot until their type of goal is finished you can just go to the else case
+                Simulation.Goal newGoal = agent.AffordanceTreeNode.SatisfactionLevels.GoalToSatisfyLowestNeed();
+                if (newGoal.NeedToSatisfy == agent.AffordanceTreeNode.Goal.NeedToSatisfy)
                 {
+                    agent.AffordanceTreeNode.Goal = newGoal;
+                }
+                else
+                {                 
                     agent.Blackboard.activeSlot.AgentDeparture();
                     agent.Blackboard.currentState = Blackboard.AgentState.PonderingNextAction;
-
                     return Result.Success;
-                }
-                //The following causes the agent to stay at the slot until another need becomes most urgent.
-                else {
-                    Simulation.Slot.Result result = 
-                        agent.AffordanceTreeNode.Parent.Affordance.ProlongLastInteraction();
-                    if (result != Simulation.Slot.Result.Success)
-                    {
-                        agent.AffordanceTreeNode.Parent.Affordance.StartRandomInteraction();
-                    }
-                    return Result.Running;                  
                 }
             }
 
@@ -91,6 +88,8 @@ namespace NEEDSIM
             {
                 agent.AffordanceTreeNode.Parent.Affordance.StartRandomInteraction();
             }
+
+			Debug.Log (agent.AffordanceTreeNode.Parent.gameObject.name);
 
             return Result.Running;
         }

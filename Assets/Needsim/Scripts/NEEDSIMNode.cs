@@ -52,7 +52,10 @@ namespace NEEDSIM
         /// The chase and interruption behaviors are examples to clarify how you could use sequences of actions in your game.
         /// The ClosestGoalByAir is demonstrating how to replace evaluation with your own method, in this example closer objects are favoured.
         /// </summary>
-        public enum ExamplePlans { GoalOriented, ValueOriented, GoalOrientedChase, InterruptionFuchsalarm, ClosestGoalByAir, ClosestValueByAir }
+        public enum ExamplePlans {
+			GoalOrientedWithConversations,
+//			GoalOriented, ValueOriented, GoalOrientedChase, InterruptionFuchsalarm, ClosestGoalByAir, ClosestValueByAir
+		}
 
         public bool runningInteractions = false;
 

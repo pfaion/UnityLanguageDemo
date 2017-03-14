@@ -32,13 +32,13 @@ namespace NEEDSIM
 
             ActionLibrary.Add("DecideGoal", new DecideGoal(agent));
             ActionLibrary.Add("MoveToSlot", new MoveToSlot(agent));
-            ActionLibrary.Add("SatisfyGoal", new SatisfyGoal(agent));
-            ActionLibrary.Add("DecideValue", new DecideValue(agent));
-            ActionLibrary.Add("SatisfyUrgentNeed", new SatisfyUrgentNeed(agent));
-            //ActionLibrary.Add("ChaseSlot", new ChaseSlot(agent));
-            //ActionLibrary.Add("InterruptionFuchsalarm", new InterruptionFuchsalarm(agent));
-            ActionLibrary.Add("DecideClosestGoal", new DecideClosestGoal(agent));
-            ActionLibrary.Add("DecideClosestValue", new DecideClosestValue(agent));
+			ActionLibrary.Add("SatisfyGoalWithConversations", new SatisfyGoalWithConversations(agent));
+//            ActionLibrary.Add("DecideValue", new DecideValue(agent));
+//            ActionLibrary.Add("SatisfyUrgentNeed", new SatisfyUrgentNeed(agent));
+//            ActionLibrary.Add("ChaseSlot", new ChaseSlot(agent));
+//            ActionLibrary.Add("InterruptionFuchsalarm", new InterruptionFuchsalarm(agent));
+//            ActionLibrary.Add("DecideClosestGoal", new DecideClosestGoal(agent));
+//            ActionLibrary.Add("DecideClosestValue", new DecideClosestValue(agent));
 
             selectedPlan = agent.selectedPlan;
 
@@ -83,37 +83,42 @@ namespace NEEDSIM
 
             switch (selectedPlan)
             {
-                case (NEEDSIMNode.ExamplePlans.GoalOriented):
-                    plan.Push(ActionLibrary["SatisfyGoal"]);
-                    plan.Push(ActionLibrary["MoveToSlot"]);
-                    plan.Push(ActionLibrary["DecideGoal"]);
-                    break;
-                case (NEEDSIMNode.ExamplePlans.ValueOriented):
-                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
-                    plan.Push(ActionLibrary["MoveToSlot"]);
-                    plan.Push(ActionLibrary["DecideValue"]);
-                    break;
-                case (NEEDSIMNode.ExamplePlans.GoalOrientedChase):
-                    plan.Push(ActionLibrary["SatisfyGoal"]);
-                    plan.Push(ActionLibrary["ChaseSlot"]);
-                    plan.Push(ActionLibrary["DecideGoal"]);
-                    break;
-                case (NEEDSIMNode.ExamplePlans.InterruptionFuchsalarm):
-                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
-                    plan.Push(ActionLibrary["MoveToSlot"]);
-                    plan.Push(ActionLibrary["DecideValue"]);
-                    plan.Push(ActionLibrary["InterruptionFuchsalarm"]);
-                    break;
-                case NEEDSIMNode.ExamplePlans.ClosestGoalByAir:
-                    plan.Push(ActionLibrary["SatisfyGoal"]);
-                    plan.Push(ActionLibrary["MoveToSlot"]);
-                    plan.Push(ActionLibrary["DecideClosestGoal"]);
-                    break;
-                case (NEEDSIMNode.ExamplePlans.ClosestValueByAir):
-                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
-                    plan.Push(ActionLibrary["MoveToSlot"]);
-                    plan.Push(ActionLibrary["DecideClosestValue"]);
-                    break;
+				case (NEEDSIMNode.ExamplePlans.GoalOrientedWithConversations):
+				    plan.Push(ActionLibrary["SatisfyGoalWithConversations"]);
+					plan.Push(ActionLibrary["MoveToSlot"]);
+					plan.Push(ActionLibrary["DecideGoal"]);
+					break;
+//                case (NEEDSIMNode.ExamplePlans.GoalOriented):
+//                    plan.Push(ActionLibrary["SatisfyGoal"]);
+//                    plan.Push(ActionLibrary["MoveToSlot"]);
+//                    plan.Push(ActionLibrary["DecideGoal"]);
+//                    break;
+//                case (NEEDSIMNode.ExamplePlans.ValueOriented):
+//                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
+//                    plan.Push(ActionLibrary["MoveToSlot"]);
+//                    plan.Push(ActionLibrary["DecideValue"]);
+//                    break;
+//                case (NEEDSIMNode.ExamplePlans.GoalOrientedChase):
+//                    plan.Push(ActionLibrary["SatisfyGoal"]);
+//                    plan.Push(ActionLibrary["ChaseSlot"]);
+//                    plan.Push(ActionLibrary["DecideGoal"]);
+//                    break;
+//                case (NEEDSIMNode.ExamplePlans.InterruptionFuchsalarm):
+//                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
+//                    plan.Push(ActionLibrary["MoveToSlot"]);
+//                    plan.Push(ActionLibrary["DecideValue"]);
+//                    plan.Push(ActionLibrary["InterruptionFuchsalarm"]);
+//                    break;
+//                case NEEDSIMNode.ExamplePlans.ClosestGoalByAir:
+//                    plan.Push(ActionLibrary["SatisfyGoal"]);
+//                    plan.Push(ActionLibrary["MoveToSlot"]);
+//                    plan.Push(ActionLibrary["DecideClosestGoal"]);
+//                    break;
+//                case (NEEDSIMNode.ExamplePlans.ClosestValueByAir):
+//                    plan.Push(ActionLibrary["SatisfyUrgentNeed"]);
+//                    plan.Push(ActionLibrary["MoveToSlot"]);
+//                    plan.Push(ActionLibrary["DecideClosestValue"]);
+//                    break;
                 default:
                     Debug.LogWarning("Plan option not handled");
                     break;

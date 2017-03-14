@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1673346924, guid: 2ae186ccc23734427897dbc451536614, type: 3}
+  m_Name: _default_NEEDSIMDatabase
+  m_EditorClassIdentifier: 
+  DatabaseName: _default_NEEDSIMDatabase
+  isDefault: 1
+  Settings:
+    useSpeciesSpecificChangeRates: 0
+  NeedsList:
+  - needName: DefaultNeed
+    minValue: 0
+    maxValue: 100
+    changePerSecond: -0.25
+    criticalState: 25
+    satisfiedState: 75
+  Species:
+  - speciesName: Default Species
+    needs:
+    - DefaultNeed
+    overrideChangeRates:
+      keys: []
+      values: []
+  Interactions:
+  - interactionName: defaultInteraction
+    satisfactions:
+    - stringValue: DefaultNeed
+      floatValue: 1
+    duration: 1
+    doesHavePreconditions: 0
+    SpeciesAllowed:
+    - Any
+    AtSatisfactionLevels:
+    - Any

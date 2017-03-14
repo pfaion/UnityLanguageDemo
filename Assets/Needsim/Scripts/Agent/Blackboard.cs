@@ -25,7 +25,7 @@ namespace NEEDSIM
 
         public string Species { get; private set; }
 
-        public NavMeshAgent NavMeshAgent { get; set; } // Replace this if not using Unity NavMesh.
+        public UnityEngine.AI.NavMeshAgent NavMeshAgent { get; set; } // Replace this if not using Unity NavMesh.
         public float smallDistance = 0.25f; //what agents consider to be close - used to refine the behavior of the NavMeshAgent
 
         public bool LastInteractionSatiesfiedUrgentNeed = false;
@@ -35,7 +35,7 @@ namespace NEEDSIM
             NEEDSIMRoot.Instance.Blackboards.Add(this); //Register self with NEEDSIM Manager
             currentState = AgentState.None;
             Species = gameobject.GetComponent<NEEDSIMNode>().speciesName;
-            NavMeshAgent = gameobject.GetComponent<NavMeshAgent>();
+            NavMeshAgent = gameobject.GetComponent<UnityEngine.AI.NavMeshAgent>();
         }
 
         /// <summary>
