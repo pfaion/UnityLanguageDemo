@@ -3,53 +3,167 @@ using System.Collections.Generic;
 using UnityEngine;
 using NEEDSIM;
 using Simulation;
+using ContextualDialogue.WorldManager;
+using ContextualDialogue.DialogueGenerator;
 
-public static class IListExtensions {
-	/// <summary>
-	/// Shuffles the element order of the specified list with Fisher-Yates algorithm.
-	/// </summary>
-	public static void Shuffle<T>(this IList<T> ts) {
-		var count = ts.Count;
-		var last = count - 1;
-		for (var i = 0; i < last; ++i) {
-			var r = UnityEngine.Random.Range(i, count);
-			var tmp = ts[i];
-			ts[i] = ts[r];
-			ts[r] = tmp;
-		}
-	}
-}
 
 public class ConversationObject : MonoBehaviour {
 
-	NEEDSIMNode needsimNode;
+	public enum State {
+		NoConversation,
+		ConversationRunning,
+		ConversationEnding
+	}
+
+
+
+	List<NEEDSIMNode> agents;
+
+	NEEDSIMNode agent1;
+	NEEDSIMNode agent2;
+
+	State state;
+
+	System.DateTime endTimer;
+
+
+	WorldEngine worldEngine;
+	DialogueGenerator dialogueGenerator;
+	ConversationalParamaters cParams;
+
+
+
 
 	// Use this for initialization
 	void Start () {
 
-		needsimNode = gameObject.GetComponent<NEEDSIMNode> ();
+		agents = new List<NEEDSIMNode> ();
+		agent1 = null;
+		agent2 = null;
+
+		state = State.NoConversation;
+
+
+		worldEngine = new WorldEngine ();
+		worldEngine.loadWorldFile ();
+
+		dialogueGenerator = new DialogueGenerator (worldEngine);
+
+		cParams = new ConversationalParamaters(ConversationalParamaters.conversationType.helloOnly, "Agent 1", "Agent 2");
+		cParams.greetingMode = ConversationalParamaters.GreetingMode.fourTurn;
+		cParams.farewellMode = ConversationalParamaters.FarewellMode.simple;//by default conversation type helloOnly doesnt have a farewell
+		cParams.conversationLocation = worldEngine.world.findByProperNoun("Germany");
+
+		QUDitem q = new QUDitem(QUDitem.ExchangeTypeEnum.where);
+		q.subject = worldEngine.world.findByProperNoun("Westerberg Campus");
+
+		cParams.addQUDitem(q);
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-		NEEDSIMNode agent1 = null;
-		NEEDSIMNode agent2 = null;
+	void SetAgentColors(Color c) {
+		Renderer rend1 = agent1.gameObject. GetComponentInChildren<Renderer> ();
+		rend1.material.shader = Shader.Find ("Standard");
+		rend1.material.SetColor ("_Color", c);
+		Renderer rend2 = agent2.gameObject. GetComponentInChildren<Renderer> ();
+		rend2.material.shader = Shader.Find ("Standard");
+		rend2.material.SetColor ("_Color", c);
+	}
 
-		string children = "";
-		Debug.Log (GetComponentInChildren<NEEDSIMNode>());
+	IEnumerator displayDialog () {
+		while (dialogueGenerator.hasNextOutput()) {
+			Turn turn = dialogueGenerator.getOutput ();
+			if ((string)(turn.participant) == "Agent 1") {
+				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
+			} else {
+				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
+			}
+			yield return new WaitForSeconds (3);
+		}
+	}
 
-//		// shuffle the list and take first two agents interacting with it
-//		List<Slot> slots = new List<Slot> (needsimNode.AffordanceTreeNode.Slots);
-//		slots.Shuffle();
-//		foreach(Slot slot in slots) {
-//			if(slot.SlotState == Slot.SlotStates.ReadyCharacter) {
-//				int a = 42;
-//			}
-//		}
 
+	void Update() {
+
+		string log = agents.Count + " agents registered: ";
+		foreach(NEEDSIMNode agent in agents) {
+			log += agent.name + ", ";
+		}
+		//Debug.Log (log);
+
+
+
+		if (state == State.NoConversation) {
+			if (agents.Count >= 2) {
+				PickRandomPair ();
+				state = State.ConversationRunning;
+				dialogueGenerator.newConversation(cParams);
+				StartCoroutine(displayDialog ());
+			}
+		} else if (state == State.ConversationEnding) {
+			SetAgentColors (Color.red);
+			if (!dialogueGenerator.hasNextOutput()) {
+				state = State.NoConversation;
+				SetAgentColors (Color.white);
+			}
+		} else if (state == State.ConversationRunning) {
+			SetAgentColors (Color.green);
+		}
+
+
+		//Debug.Log ("State: " + state.ToString ());
+
+	}
+
+	public bool AgentRegistered(NEEDSIMNode agent) {
+		return agents.Contains (agent);
+	}
+		
+
+	public void RegisterAgent(NEEDSIMNode agent) {
+		Debug.Log ("Registering agent");
+		agents.Add (agent);
 		
 	}
 
+	public bool DeregisterAgent(NEEDSIMNode agent) {
+		Debug.Log ("Agent wants deregister: " + agent.name);
+		if (AgentRegistered (agent)) {
+			agents.Remove (agent);
+		}
+		if (state == State.NoConversation || (agent != agent1 && agent != agent2)) {
+			Debug.Log ("Deregistering Agent savely: " + agent.name);
+			return true;
+		}
+		if (state == State.ConversationRunning) {
+			EndConversation ();
+		}
+		return false;
+	}
 
+
+	public void EndConversation() {
+		if (state == State.NoConversation) {
+			return;
+		}
+		Debug.Log ("Ending Conversation first...");
+
+		dialogueGenerator.conversation.closeConversation ();
+		state = State.ConversationEnding;
+
+	}
+		
+
+	void PickRandomPair() {
+
+		int i1 = Random.Range (0, agents.Count - 1);
+		int i2 = Random.Range (0, agents.Count - 2);
+
+		if (i2 >= i1) {
+			i2 += 1;
+		}
+
+		agent1 = agents [i1];
+		agent2 = agents [i2];
+
+	}
 }

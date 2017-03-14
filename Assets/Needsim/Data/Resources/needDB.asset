@@ -9,31 +9,48 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 1673346924, guid: 2ae186ccc23734427897dbc451536614, type: 3}
-  m_Name: _default_NEEDSIMDatabase
+  m_Name: needDB
   m_EditorClassIdentifier: 
-  DatabaseName: _default_NEEDSIMDatabase
+  DatabaseName: needDB
   isDefault: 1
   Settings:
     useSpeciesSpecificChangeRates: 0
   NeedsList:
-  - needName: DefaultNeed
+  - needName: Rested
     minValue: 0
     maxValue: 100
-    changePerSecond: -0.25
+    changePerSecond: -4
+    criticalState: 25
+    satisfiedState: 75
+  - needName: Full
+    minValue: 0
+    maxValue: 100
+    changePerSecond: -4
     criticalState: 25
     satisfiedState: 75
   Species:
-  - speciesName: Default Species
+  - speciesName: Human
     needs:
-    - DefaultNeed
+    - Rested
+    - Full
     overrideChangeRates:
       keys: []
       values: []
   Interactions:
-  - interactionName: defaultInteraction
+  - interactionName: sleep
     satisfactions:
-    - stringValue: DefaultNeed
-      floatValue: 1
+    - stringValue: Rested
+      floatValue: 8
+    duration: 1
+    doesHavePreconditions: 0
+    SpeciesAllowed:
+    - Any
+    AtSatisfactionLevels:
+    - Any
+  - interactionName: eat
+    satisfactions:
+    - stringValue: Full
+      floatValue: 8
     duration: 1
     doesHavePreconditions: 0
     SpeciesAllowed:

@@ -47,7 +47,7 @@ namespace NEEDSIM
                 return Result.Failure;
             }
 
-            //Check whether the current interaction is still running. This is in a seperate block as it 
+            // Check whether the current interaction is still running. This is in a seperate block as it 
             // might be edited for some usage scenarios.
             bool interactionStillRunning = false;
             if (!agent.AffordanceTreeNode.Parent.Affordance.InteractionStartedThisFrame
@@ -56,12 +56,16 @@ namespace NEEDSIM
                 interactionStillRunning = true;
             }
 
+
+			// CONV
+			ConversationObject convObj = agent.AffordanceTreeNode.Parent.gameObject.GetComponent<ConversationObject>();
+
+
             //If goal is achieved get ready for next action
             if (!interactionStillRunning
                 && agent.AffordanceTreeNode.Goal.HasBeenAchieved)
             {
-				// Check here for conversations:
-				//return Result.Running;
+				
 
 
                 //If you do not want agents to stay at the same slot until their type of goal is finished you can just go to the else case
@@ -69,27 +73,41 @@ namespace NEEDSIM
                 if (newGoal.NeedToSatisfy == agent.AffordanceTreeNode.Goal.NeedToSatisfy)
                 {
                     agent.AffordanceTreeNode.Goal = newGoal;
+
+
                 }
                 else
                 {                 
                     agent.Blackboard.activeSlot.AgentDeparture();
                     agent.Blackboard.currentState = Blackboard.AgentState.PonderingNextAction;
+
+					// CONV
+					if (convObj != null && ! convObj.DeregisterAgent (agent)) {
+						return Result.Running;
+					}
+
+
                     return Result.Success;
                 }
             }
+
+			// CONV
+			if (convObj != null && !convObj.AgentRegistered(agent)) {
+				convObj.RegisterAgent (agent);
+			}
+
 
             //Participate in current interaction or start a new one
             if (agent.AffordanceTreeNode.Parent.Affordance.CurrentInteraction != null)
             {
                 agent.AffordanceTreeNode.ApplyParentInteraction();
-                agent.Blackboard.currentState = Blackboard.AgentState.ParticipatingSlot;
+				agent.Blackboard.currentState = Blackboard.AgentState.ParticipatingSlot;
             }
             else
             {
                 agent.AffordanceTreeNode.Parent.Affordance.StartRandomInteraction();
             }
 
-			Debug.Log (agent.AffordanceTreeNode.Parent.gameObject.name);
 
             return Result.Running;
         }

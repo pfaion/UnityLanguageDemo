@@ -61,7 +61,7 @@ namespace NEEDSIM
                         return Result.Failure;
                     }
                     if (agent.ArrivalAtSlot(agent.Blackboard.activeSlot))
-                    {
+					{
                         return Action.Result.Success;
                     }
                     else 
