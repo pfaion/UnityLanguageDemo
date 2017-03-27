@@ -8,7 +8,6 @@ public class AgentScript : MonoBehaviour {
 	public Text uiText;
 	string currentPhrase = "";
 
-	// Use this for initialization
 	void Start () {
 		uiText.text = "";
 	}
@@ -16,9 +15,16 @@ public class AgentScript : MonoBehaviour {
 	public void SetCurrentPhrase(string phrase) {
 		currentPhrase = phrase;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		uiText.text = currentPhrase;
+
+		// Billboarding function for the canvas
+		Camera cam = Camera.current;
+		if (cam != null) canvas.transform.forward = cam.transform.forward;
+
+		// Hide canvas if empty
+		canvas.gameObject.SetActive (currentPhrase != "");
 	}
+
 }

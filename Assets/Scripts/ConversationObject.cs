@@ -15,6 +15,8 @@ public class ConversationObject : MonoBehaviour {
 		ConversationEnding
 	}
 
+	public int turnTime = 3;
+
 
 
 	List<NEEDSIMNode> agents;
@@ -51,7 +53,7 @@ public class ConversationObject : MonoBehaviour {
 
 		cParams = new ConversationalParamaters(ConversationalParamaters.conversationType.helloOnly, "Agent 1", "Agent 2");
 		cParams.greetingMode = ConversationalParamaters.GreetingMode.fourTurn;
-		cParams.farewellMode = ConversationalParamaters.FarewellMode.simple;//by default conversation type helloOnly doesnt have a farewell
+		cParams.farewellMode = ConversationalParamaters.FarewellMode.simple;
 		cParams.conversationLocation = worldEngine.world.findByProperNoun("Germany");
 
 		QUDitem q = new QUDitem(QUDitem.ExchangeTypeEnum.where);
@@ -74,11 +76,15 @@ public class ConversationObject : MonoBehaviour {
 			Turn turn = dialogueGenerator.getOutput ();
 			if ((string)(turn.participant) == "Agent 1") {
 				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
+				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
 			} else {
+				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
 				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
 			}
-			yield return new WaitForSeconds (3);
+			yield return new WaitForSeconds (turnTime);
 		}
+		agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
+		agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
 	}
 
 
@@ -88,7 +94,6 @@ public class ConversationObject : MonoBehaviour {
 		foreach(NEEDSIMNode agent in agents) {
 			log += agent.name + ", ";
 		}
-		//Debug.Log (log);
 
 
 
@@ -108,9 +113,7 @@ public class ConversationObject : MonoBehaviour {
 		} else if (state == State.ConversationRunning) {
 			SetAgentColors (Color.green);
 		}
-
-
-		//Debug.Log ("State: " + state.ToString ());
+			
 
 	}
 
