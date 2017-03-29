@@ -51,7 +51,7 @@ public class ConversationObject : MonoBehaviour {
 
 		dialogueGenerator = new DialogueGenerator (worldEngine);
 
-		cParams = new ConversationalParamaters(ConversationalParamaters.conversationType.helloOnly, "Agent 1", "Agent 2");
+		cParams = new ConversationalParamaters(ConversationalParamaters.conversationType.helloOnly, "<agent1>", "<agent2>");
 		cParams.greetingMode = ConversationalParamaters.GreetingMode.fourTurn;
 		cParams.farewellMode = ConversationalParamaters.FarewellMode.simple;
 		cParams.conversationLocation = worldEngine.world.findByProperNoun("Germany");
@@ -74,12 +74,15 @@ public class ConversationObject : MonoBehaviour {
 	IEnumerator displayDialog () {
 		while (dialogueGenerator.hasNextOutput()) {
 			Turn turn = dialogueGenerator.getOutput ();
-			if ((string)(turn.participant) == "Agent 1") {
-				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
+			string utterance = turn.utterance;
+			utterance = utterance.Replace ("<agent1>", agent1.gameObject.GetComponent<AgentScript>().name);
+			utterance = utterance.Replace ("<agent2>", agent2.gameObject.GetComponent<AgentScript>().name);
+			if ((string)(turn.participant) == "<agent1>") {
+				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (utterance);
 				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
 			} else {
 				agent1.gameObject.GetComponent<AgentScript>().SetCurrentPhrase ("");
-				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (turn.utterance);
+				agent2.gameObject.GetComponent<AgentScript>().SetCurrentPhrase (utterance);
 			}
 			yield return new WaitForSeconds (turnTime);
 		}
