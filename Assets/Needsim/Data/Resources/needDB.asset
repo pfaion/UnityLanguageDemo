@@ -19,20 +19,20 @@ MonoBehaviour:
   - needName: Rested
     minValue: 0
     maxValue: 100
-    changePerSecond: -4
+    changePerSecond: -3
     criticalState: 25
     satisfiedState: 75
-  - needName: Full
+  - needName: Hunger
     minValue: 0
     maxValue: 100
-    changePerSecond: -4
+    changePerSecond: -3
     criticalState: 25
     satisfiedState: 75
   Species:
   - speciesName: Human
     needs:
     - Rested
-    - Full
+    - Hunger
     overrideChangeRates:
       keys: []
       values: []
@@ -49,7 +49,7 @@ MonoBehaviour:
     - Any
   - interactionName: eat
     satisfactions:
-    - stringValue: Full
+    - stringValue: Hunger
       floatValue: 8
     duration: 1
     doesHavePreconditions: 0
