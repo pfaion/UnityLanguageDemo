@@ -7,7 +7,7 @@ using ContextualDialogue.WorldManager;
 using ContextualDialogue.DialogueGenerator;
 
 
-public class ConversationObject : MonoBehaviour {
+public class ConversationController : MonoBehaviour {
 
 	public enum State {
 		NoConversation,

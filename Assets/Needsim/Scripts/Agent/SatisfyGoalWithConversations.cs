@@ -57,8 +57,8 @@ namespace NEEDSIM
             }
 
 
-			// CONV
-			ConversationObject convObj = agent.AffordanceTreeNode.Parent.gameObject.GetComponent<ConversationObject>();
+			// CONVERSATION: check for conversation allowed, by requesting the ConversationController component
+			ConversationController convObj = agent.AffordanceTreeNode.Parent.gameObject.GetComponent<ConversationController>();
 
 
             //If goal is achieved get ready for next action
@@ -81,7 +81,7 @@ namespace NEEDSIM
                     agent.Blackboard.activeSlot.AgentDeparture();
                     agent.Blackboard.currentState = Blackboard.AgentState.PonderingNextAction;
 
-					// CONV
+					// CONVERSATION: try to deregister. if not deregistered yet, continue interaction
 					if (convObj != null && ! convObj.DeregisterAgent (agent)) {
 						return Result.Running;
 					}
@@ -91,7 +91,7 @@ namespace NEEDSIM
                 }
             }
 
-			// CONV
+			// CONVERSATION: if not yet registered (just started interaction), register the agent
 			if (convObj != null && !convObj.AgentRegistered(agent)) {
 				convObj.RegisterAgent (agent);
 			}
